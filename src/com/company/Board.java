@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public class Board extends JComponent implements MouseListener, MouseMotionListener {
     private ArrayList<Player> players;
-    private ArrayList<Wall> WallsList;
+    private ArrayList<Wall> wallsList;
     private Line2D.Double mouseDragLine;
     private SidePanel side;
 
@@ -20,7 +20,7 @@ public class Board extends JComponent implements MouseListener, MouseMotionListe
         this.addMouseMotionListener(this);
 
         players = new ArrayList<>();
-        WallsList = new ArrayList<>();
+        wallsList = new ArrayList<>();
         mouseDragLine = new Line2D.Double(0, 0, 0, 0);
 
         players.addAll(p);
@@ -32,69 +32,92 @@ public class Board extends JComponent implements MouseListener, MouseMotionListe
 
     //Paint board component each time (board.repaint)
     public void paintComponent(Graphics g) {
-        Graphics2D graphic = (Graphics2D) g;
+        Graphics2D graphics = (Graphics2D) g;
 
-        int SIZE_CONST = 70;
+        final int TILE_SIZE = 70;
+        final int BOARD_SIZE = 9;
+
+        final Color backgroundColor = new Color(81, 11, 133);
+        final Color boardColor = new Color(0, 0, 0);
+        final Color beadBorderColor = Color.yellow;
+        final Color wallColor = new Color(255, 29, 170);
+        final Color wallNumberColor = new Color(255, 234, 0);
 
         //draw two backgrounds that overlap each other
-        graphic.setColor(new Color(81, 11, 133));
-        graphic.fill(new Rectangle(0, 0, SIZE_CONST * 9 + 15, SIZE_CONST * 9 + 15));
-        graphic.setColor(new Color(0, 0, 0));
-        graphic.fill(new Rectangle(0, 0, SIZE_CONST * 9, SIZE_CONST * 9));
+        graphics.setColor(backgroundColor);
+        graphics.fill(new Rectangle(0, 0, TILE_SIZE * BOARD_SIZE + 15, TILE_SIZE * BOARD_SIZE + 15));
 
-        for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
-                for (Player player : players) {
+        graphics.setColor(boardColor);
+        graphics.fill(new Rectangle(0, 0, TILE_SIZE * BOARD_SIZE, TILE_SIZE * BOARD_SIZE));
+
+        // Draw beads
+        for (Player player : players) {
+            for (int i = 0; i < BOARD_SIZE; i++) {
+                for (int j = 0; j < BOARD_SIZE; j++) {
                     if (player.getX() == i && player.getY() == j) {
-                        //color of each bead
-                        graphic.setColor(player.getColor());
-                        graphic.fill(new Rectangle2D.Double(SIZE_CONST * i + (SIZE_CONST / 4), SIZE_CONST * j + (SIZE_CONST / 4),
-                                SIZE_CONST / 2, SIZE_CONST / 2));
-                        //border of beads
-                        graphic.setColor(Color.yellow);
-                        graphic.draw(new Rectangle2D.Double(SIZE_CONST * i + (SIZE_CONST / 4), SIZE_CONST * j + (SIZE_CONST / 4),
-                                SIZE_CONST / 2, SIZE_CONST / 2));
+                        graphics.setColor(player.getColor());
+                        graphics.fill(new Rectangle2D.Double(
+                                TILE_SIZE * i + (TILE_SIZE / 4),
+                                TILE_SIZE * j + (TILE_SIZE / 4),
+                                TILE_SIZE / 2, TILE_SIZE / 2)
+                        );
+
+                        graphics.setColor(beadBorderColor);
+                        graphics.draw(new Rectangle2D.Double(
+                                TILE_SIZE * i + (TILE_SIZE / 4),
+                                TILE_SIZE * j + (TILE_SIZE / 4),
+                                TILE_SIZE / 2, TILE_SIZE / 2)
+                        );
                     }
                 }
-                //draw grooves that walls place in it
-                graphic.setColor(new Color(255, 29, 170));
-                graphic.draw(new Rectangle(SIZE_CONST * i, SIZE_CONST * j, SIZE_CONST - 5, SIZE_CONST - 5));
             }
         }
 
-        //draw walls
-        graphic.setColor(new Color(255, 234, 0));
-        for (Wall wall : WallsList) {
-            graphic.draw(new Line2D.Double(wall.getX1() * SIZE_CONST, wall.getY1() * SIZE_CONST,
-                    wall.getX2() * SIZE_CONST, wall.getY2() * SIZE_CONST));
+        // Draw grooves
+        graphics.setColor(wallColor);
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                graphics.draw(new Rectangle(TILE_SIZE * i, TILE_SIZE * j, TILE_SIZE - 5, TILE_SIZE - 5));
+            }
         }
-        //draw number of coordinates of tiles (y)
-        for (int i = 0; i < 10; i++)
-            graphic.drawString(Integer.toString(i), SIZE_CONST * i, SIZE_CONST * 9 + 12);
-        //draw number of coordinates of tiles (x)
-        for (int i = 0; i < 9; i++)
-            graphic.drawString(Integer.toString(i), SIZE_CONST * 9 + 4, SIZE_CONST * i + 8);
 
-        //for graphical draw of wall in the board
-        graphic.draw(mouseDragLine);
+        // Draw walls
+        graphics.setColor(wallNumberColor);
+        for (Wall wall : wallsList) {
+            graphics.draw(new Line2D.Double(wall.getX1() * TILE_SIZE, wall.getY1() * TILE_SIZE,
+                    wall.getX2() * TILE_SIZE, wall.getY2() * TILE_SIZE));
+        }
+
+        // Draw tile coordinates (y)
+        for (int i = 0; i < 10; i++) {
+            graphics.drawString(Integer.toString(i), TILE_SIZE * i, TILE_SIZE * BOARD_SIZE + 12);
+        }
+
+        // Draw tile coordinates (x)
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            graphics.drawString(Integer.toString(i), TILE_SIZE * BOARD_SIZE + 4, TILE_SIZE * i + 8);
+        }
+
+        // For graphical draw of wall in the board
+        graphics.draw(mouseDragLine);
     }
 
     //GET AND SET METHODS
 
     public void addWall(Wall w) {
-        WallsList.add(w);
+        wallsList.add(w);
     }
 
     public void removeWall(Wall w) {
-        WallsList.remove(w);
+        wallsList.remove(w);
     }
 
     public Wall getWall(int i) {
-        return WallsList.get(i);
+        return wallsList.get(i);
     }
 
     public int getNumWalls() {
-        return WallsList.size();
+        return wallsList.size();
     }
 
     public Player getPlayer(int i) {
@@ -127,31 +150,49 @@ public class Board extends JComponent implements MouseListener, MouseMotionListe
     // just draw a line when mouse dragged
     @Override
     public void mouseDragged(MouseEvent e) {
-        double x = mouseDragLine.getX1();
-        double y = mouseDragLine.getY1();
-        mouseDragLine.setLine(x, y, e.getX(), e.getY());
+        try {
+            double startX = mouseDragLine.getX1();
+            double startY = mouseDragLine.getY1();
+            double endX = e.getX();
+            double endY = e.getY();
+            mouseDragLine.setLine(startX, startY, endX, endY);
 
-        this.repaint();
+            repaint();
+        } catch (Exception ex) {
+            // Handle or log the exception appropriately
+            ex.printStackTrace();
+        }
     }
 
     // place wall if we can
     @Override
     public void mouseReleased(MouseEvent e) {
-        boolean placed = players.get(side.getPlayerTurn() - 1).placeWall
-                (new Wall(this.getX1(this), this.getY1(this), this.getX2(this), this.getY2(this)), this);
+        try {
+            Wall wall = new Wall(this.convertToBoardX1(), this.convertToBoardY1(),
+                    this.convertToBoardX2(), this.convertToBoardY2());
 
-        if (placed) {
-            side.NextPlayer();
-            if (side.getPlayerTurn() > players.size())
-                side.setPlayerTurn(1);
-            side.RefreshInfo();
-        } else {
-            JOptionPane.showMessageDialog(null,
-                    "Your wall cannot be placed in here,try again", "Wall placement error", JOptionPane.ERROR_MESSAGE);
+            boolean wallPlaced = players.get(side.getPlayerTurn() - 1).placeWall(wall, this);
+
+            if (wallPlaced) {
+                side.NextPlayer();
+                if (side.getPlayerTurn() > players.size())
+                    side.setPlayerTurn(1);
+                side.RefreshInfo();
+            } else {
+                JOptionPane.showMessageDialog(
+                        null,
+                        "Your wall cannot be placed here. Please try again.",
+                        "Wall placement error",
+                        JOptionPane.ERROR_MESSAGE
+                );
+            }
+
+            this.repaint();
+            mouseDragLine.setLine(0, 0, 0, 0);
+        } catch (Exception ex) {
+            // Handle or log the exception appropriately
+            ex.printStackTrace();
         }
-
-        this.repaint();
-        mouseDragLine.setLine(0, 0, 0, 0);
     }
 
     //draw wall with mouse drag
@@ -159,21 +200,20 @@ public class Board extends JComponent implements MouseListener, MouseMotionListe
     public void mouseMoved(MouseEvent e) {
     }
 
-    //convert the coordinate of the new wall on the board between 0-9
-    public int getX1(Board b) {
-        return (int) Math.round(b.mouseDragLine.getX1() / 70);
+    private int convertToBoardX1() {
+        return (int) Math.round(mouseDragLine.getX1() / 70);
     }
 
-    public int getY1(Board b) {
-        return (int) Math.round(b.mouseDragLine.getY1() / 70);
+    private int convertToBoardY1() {
+        return (int) Math.round(mouseDragLine.getY1() / 70);
     }
 
-    public int getX2(Board b) {
-        return (int) Math.round(b.mouseDragLine.getX2() / 70);
+    private int convertToBoardX2() {
+        return (int) Math.round(mouseDragLine.getX2() / 70);
     }
 
-    public int getY2(Board b) {
-        return (int) Math.round(b.mouseDragLine.getY2() / 70);
+    private int convertToBoardY2() {
+        return (int) Math.round(mouseDragLine.getY2() / 70);
     }
 
 }
