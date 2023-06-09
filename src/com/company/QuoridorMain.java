@@ -34,6 +34,27 @@ public class QuoridorMain {
     public static JFrame gameFrame, startFrame;
 
     public static void startPage() {
+        hideGameFrames();
+        createStartFrame();
+        setupStartPanel();
+        setupNewGameButton();
+        setupLoadGameButton();
+        setupCupButton();
+        showStartFrame();
+    }
+
+    private static void createStartFrame() {
+        //create start page frame
+        startFrame = new JFrame();
+        startFrame.setTitle("Main Menu");
+        startFrame.setSize(620, 500);
+        startFrame.setFocusable(true);
+        startFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        startFrame.setLayout(null);
+        startFrame.setResizable(false);
+    }
+
+    private static void hideGameFrames() {
         if (gameFrame != null) {
             gameFrame.setVisible(false);
         }
@@ -43,69 +64,82 @@ public class QuoridorMain {
         if (Cup.playFrame != null) {
             Cup.playFrame.setVisible(false);
         }
-        //create start page frame
-        startFrame = new JFrame();
-        startFrame.setTitle("Main Menu");
-        startFrame.setSize(620, 500);
-        startFrame.setFocusable(true);
-        startFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        startFrame.setLayout(null);
-        startFrame.setResizable(false);
+    }
 
+    private static void setupStartPanel() {
+        JPanel startPanel = new JPanel();
+        startPanel.setLayout(new GridLayout(3, 1, 0, 5));
+        startFrame.setContentPane(startPanel);
         container = startFrame.getContentPane();
+    }
 
-        //New Game key
-        JPanel newgamebuttonPanel = new JPanel();
-        newgamebuttonPanel.setBounds(100, 50, 400, 100);
+    private static RoundedButton createButton(String text, int fontSize, int borderRadius) {
+        RoundedButton button = new RoundedButton(text, borderRadius);
 
-        JButton newgamebutton = new JButton("New Game");
-        newgamebutton.setFont(new Font("Arial", Font.BOLD, 40));
-        newgamebutton.setPreferredSize(new Dimension(400, 100));
-        newgamebutton.setFocusPainted(false);
-        newgamebutton.setBackground(new Color(174, 75, 255));
-        newgamebutton.setForeground(new Color(255, 209, 247));
+        // Define the gradient colors
+        Color startColor = new Color(174, 75, 255);
+        Color endColor = new Color(103, 36, 193);
 
-        //Load Game key
-        JPanel LoadGameButtonPanel = new JPanel();
-        LoadGameButtonPanel.setBounds(100, 200, 400, 100);
+        // Create a gradient background with rounded corners
+        button.setBackground(startColor);
+        button.setGradient(startColor, endColor);
 
-        JButton loadGameButton = new JButton("Load Game");
-        loadGameButton.setFont(new Font("Arial", Font.BOLD, 40));
-        loadGameButton.setPreferredSize(new Dimension(400, 100));
-        loadGameButton.setFocusPainted(false);
-        loadGameButton.setBackground(new Color(174, 75, 255));
-        loadGameButton.setForeground(new Color(255, 209, 247));
+        // Add a subtle shadow effect
+        button.setShadow(true);
+        button.setShadowColor(Color.GRAY);
+        button.setShadowOpacity(0.5f);
+        button.setShadowOffsetX(2);
+        button.setShadowOffsetY(2);
 
-        //Cup key
-        JPanel cupButtonPanel = new JPanel();
-        cupButtonPanel.setBounds(100, 350, 400, 100);
+        // Set font size and style
+        button.setFont(new Font("Arial", Font.BOLD, fontSize));
 
-        JButton cupButton = new JButton("Cup");
-        cupButton.setFont(new Font("Arial", Font.BOLD, 40));
-        cupButton.setPreferredSize(new Dimension(400, 100));
-        cupButton.setFocusPainted(false);
-        cupButton.setBackground(new Color(174, 75, 255));
-        cupButton.setForeground(new Color(255, 209, 247));
+        // Add hover effect
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setBackground(endColor);
+            }
 
-        newgamebuttonPanel.add(newgamebutton);
-        container.add(newgamebuttonPanel);
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button.setBackground(startColor);
+            }
+        });
 
-        LoadGameButtonPanel.add(loadGameButton);
-        container.add(LoadGameButtonPanel);
+        return button;
+    }
 
-        cupButtonPanel.add(cupButton);
-        container.add(cupButtonPanel);
+    private static void setupNewGameButton() {
+        JButton newGameButton = createButton("New Game",50, 30);
+        JPanel newGameButtonPanel = createButtonPanel(newGameButton);
+        newGameButton.addActionListener(e -> game());
+        container.add(newGameButtonPanel);
+    }
 
-        //action for new game key
-        newgamebutton.addActionListener(e -> game());
-
-        //action for load game key
+    private static void setupLoadGameButton() {
+        JButton loadGameButton = createButton("Load Game",40, 30);
+        JPanel loadGameButtonPanel = createButtonPanel(loadGameButton);
         loadGameButton.addActionListener(e -> gameload());
+        container.add(loadGameButtonPanel);
+    }
 
-        //action for Cup key
+    private static void setupCupButton() {
+        JButton cupButton = createButton("Cup",40, 30);
+        JPanel cupButtonPanel = createButtonPanel(cupButton);
         cupButton.addActionListener(e -> Cup.CupChamp());
+        container.add(cupButtonPanel);
+    }
 
+    private static void showStartFrame() {
         startFrame.setVisible(true);
+    }
+
+    private static JPanel createButtonPanel(JButton button) {
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(button);
+        buttonPanel.setBorder(
+                BorderFactory.createEmptyBorder(5, 0, 5, 0)
+        );
+        return buttonPanel;
     }
 
     public static void main(String[] args) {
