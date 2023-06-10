@@ -42,6 +42,7 @@ public class Board extends JComponent implements MouseListener, MouseMotionListe
         final Color beadBorderColor = Color.yellow;
         final Color wallColor = new Color(255, 29, 170);
         final Color wallNumberColor = new Color(255, 234, 0);
+        final float lineThickness = 6;
 
         //draw two backgrounds that overlap each other
         graphics.setColor(backgroundColor);
@@ -80,7 +81,7 @@ public class Board extends JComponent implements MouseListener, MouseMotionListe
                 graphics.draw(new Rectangle(TILE_SIZE * i, TILE_SIZE * j, TILE_SIZE - 5, TILE_SIZE - 5));
             }
         }
-
+        graphics.setStroke(new BasicStroke(lineThickness));
         // Draw walls
         graphics.setColor(wallNumberColor);
         for (Wall wall : wallsList) {
