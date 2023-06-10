@@ -23,8 +23,6 @@ public class Player {
     public static final Line2D.Double LEFT = new Line2D.Double(0, 0, 0, 9);
     public static final Line2D.Double RIGHT = new Line2D.Double(8, 0, 8, 8);
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     public Player(int x_pos, int y_pos, Line2D.Double wp, String nm, int wall, Color cl) {
         x = x_pos;
         y = y_pos;
@@ -34,7 +32,6 @@ public class Player {
         color = cl;
     }
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
     //return boolean and add move bead if its possible
     public boolean MoveBead(String dir, Board b) {
         boolean CanMove = true;
@@ -572,7 +569,6 @@ public class Player {
         return JumpMove;
     }
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////
     //Getters & Setters
     public void setNumWalls(int n) {
         NumWalls = n;
@@ -614,7 +610,6 @@ public class Player {
         y = newY;
     }
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////
     public static void canWin(Player player, Board b) {
         int bx = player.x, by = player.y;
         if (player.MoveBead("UP", b)) {

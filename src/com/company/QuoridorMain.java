@@ -170,25 +170,8 @@ public class QuoridorMain {
         Player p3 = new Player(0, 4, Player.RIGHT, "Player 3", 5, Color.GREEN);
         Player p4 = new Player(8, 4, Player.LEFT, "Player 4", 5, Color.YELLOW);
 
-        //validate number of player
-        while (true) {
-            try {
-                numPlayers = Integer.parseInt(JOptionPane.showInputDialog("Enter number of players (2/4)"));
-                if (numPlayers == 4 || numPlayers == 2) {
-                    break;
-                } else {
-                    JOptionPane.showMessageDialog(
-                            null, "The game must be 2 or 4 players", "Error",
-                            JOptionPane.ERROR_MESSAGE);
-                }
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(
-                        null, "Invalid input!", "Error",
-                        JOptionPane.ERROR_MESSAGE);
-            }
-        }
+        numPlayers = validateNumberOfPlayers();
 
-        //edit players and some player info if there are 4 players
         if (numPlayers == 4) {
             p1.setNumWalls(5);
             p2.setNumWalls(5);
@@ -196,46 +179,7 @@ public class QuoridorMain {
             players.add(p4);
         }
 
-        //validate name of the players
-        ArrayList<String> copy_names = new ArrayList<>();
-        for (int i = 0; i < players.size(); i++) {
-            boolean b = true;
-            while (b) {
-                players.get(i).setName(JOptionPane.showInputDialog(
-                        null, "Enter Player " + (i + 1) + "'s Name", "player " + (i + 1),
-                        JOptionPane.INFORMATION_MESSAGE));
-                try {
-                    players.get(i).setName(players.get(i).getName().replaceAll("\\W+", ""));
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(
-                            null, "The player's name must not be just a number/none alphabets!", "Error",
-                            JOptionPane.ERROR_MESSAGE);
-                    i--;
-                    break;
-                }
-
-                for (int j = 0; j < copy_names.size(); j++) {
-                    if (copy_names.get(j).equals(players.get(i).getName())) {
-                        JOptionPane.showMessageDialog(
-                                null, "Each player should have a different name", "Error",
-                                JOptionPane.ERROR_MESSAGE);
-                        i--;
-                        break;
-                    }
-                }
-                if (players.get(i).getName().equals("")) {
-                    JOptionPane.showMessageDialog(
-                            null, "Player's name must not be empty!", "Error",
-                            JOptionPane.ERROR_MESSAGE);
-                    i--;
-                    break;
-                }
-
-                copy_names.add(players.get(i).getName());
-                b = false;
-
-            }
-        }
+        validatePlayerNames(players);
 
         //crate new board and side
         final Board board = new Board(players);
@@ -274,7 +218,7 @@ public class QuoridorMain {
 
                 savebutton.addActionListener(e13 -> {
                     side.saveGame();
-                    JOptionPane.showMessageDialog(null, "Successfully saved");
+                    showMessageDialog("Successfully saved");
                     startPage();
                     exitframe.setVisible(false);
                     gameFrame.setVisible(false);
@@ -313,6 +257,49 @@ public class QuoridorMain {
 
     }
 
+    private static void validatePlayerNames(ArrayList<Player> players) {
+        ArrayList<String> playerNames = new ArrayList<>();
+
+        for (int i = 0; i < players.size(); i++) {
+            boolean isValidName = false;
+
+            while (!isValidName) {
+                String playerName = getPlayerName(i + 1);
+
+                if (playerName.matches(".*\\d.*")) {
+                    showErrorDialog("The player's name must not contain just numbers", "Error");
+                } else if (playerNames.contains(playerName)) {
+                    showErrorDialog("Each player should have a different name", "Error");
+                } else if (playerName.trim().isEmpty()) {
+                    showErrorDialog("Player's name must not be empty!", "Error");
+                } else {
+                    players.get(i).setName(playerName);
+                    playerNames.add(playerName);
+                    isValidName = true;
+                }
+            }
+        }
+    }
+
+    private static int validateNumberOfPlayers() {
+        int numPlayers;
+
+        while (true) {
+            try {
+                numPlayers = Integer.parseInt(JOptionPane.showInputDialog("Enter number of players (2/4)"));
+                if (numPlayers == 4 || numPlayers == 2) {
+                    break;
+                } else {
+                    showErrorDialog("The game must be 2 or 4 players", "Error");
+                }
+            } catch (NumberFormatException e) {
+                showErrorDialog("Invalid input!", "Error");
+            }
+        }
+
+        return numPlayers;
+    }
+
     public static void gameload() {
         //set array list to extraction the data from json
         ArrayList<String> player1 = new ArrayList<>();
@@ -321,16 +308,14 @@ public class QuoridorMain {
         ArrayList<String> player4 = new ArrayList<>();
         ArrayList<String> wallList = new ArrayList<>();
         boolean checkEmpty = false;
-        BigDecimal turn = null;
+        BigDecimal playerTurn = null;
 
         //load JSON
         try {
             Reader reader = Files.newBufferedReader(Paths.get("saveplayer.json"));
-
-            // create parser
             JsonObject parser = (JsonObject) Jsoner.deserialize(reader);
-            //get turn of the player
-            turn = (BigDecimal) parser.get("playerTurn");
+
+            playerTurn = (BigDecimal) parser.get("playerTurn");
 
             //get information of the players
             Map<Object, Object> p1 = (Map<Object, Object>) parser.get("player1");
@@ -338,6 +323,7 @@ public class QuoridorMain {
 
             Map<Object, Object> p2 = (Map<Object, Object>) parser.get("player2");
             p2.forEach((key, value) -> player2.add(value + ""));
+
             try {
                 Map<Object, Object> p3 = (Map<Object, Object>) parser.get("player3");
                 p3.forEach((key, value) -> player3.add(value + ""));
@@ -355,16 +341,13 @@ public class QuoridorMain {
 
             reader.close();
         } catch (JsonException ex) {
-            JOptionPane.showMessageDialog(
-                    null, "There is no data in saved file ,Plz save a new game"
-                    , "Empty saved file", JOptionPane.ERROR_MESSAGE);
+            showErrorDialog("There is no data in saved file. Please save a new game.", "Empty saved file");
             checkEmpty = true;
         } catch (IOException e2) {
-            JOptionPane.showMessageDialog(
-                    null, "There is no saved file ,Plz save a new game"
-                    , "No Such File", JOptionPane.ERROR_MESSAGE);
+            showErrorDialog("There is no saved file. Please save a new game.", "No Such File");
             checkEmpty = true;
         }
+
         if (!checkEmpty) {
             startFrame.setVisible(false);
             gameFrame = new JFrame();
@@ -406,8 +389,8 @@ public class QuoridorMain {
                     players.get(0).setNumWalls(players.get(0).getNumWalls() + 1);
                 }
             }
-            //set the player's turn
-            side.setPlayerTurn(Integer.parseInt(String.valueOf(turn)));
+            //set the player's playerTurn
+            side.setPlayerTurn(Integer.parseInt(String.valueOf(playerTurn)));
 
             //add board and side to game frame
             gameFrame.add(board, BorderLayout.CENTER);
@@ -447,7 +430,7 @@ public class QuoridorMain {
                     savebutton.addActionListener(e13 -> {
                         new Thread();
                         side.saveGame();
-                        JOptionPane.showMessageDialog(null, "Successfully saved");
+                        showMessageDialog("Successfully saved");
                         startPage();
                         exitframe.setVisible(false);
                         gameFrame.setVisible(false);
@@ -485,6 +468,20 @@ public class QuoridorMain {
 
             gameFrame.setVisible(true);
         }
+    }
+
+    private static void showErrorDialog(String message, String title) {
+        JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
+    }
+
+    private static void showMessageDialog(String message) {
+        JOptionPane.showMessageDialog(null, message);
+    }
+
+    private static String getPlayerName(int playerNumber) {
+        return JOptionPane.showInputDialog(
+                null, "Enter Player " + playerNumber + "'s Name", "Player " + playerNumber,
+                JOptionPane.INFORMATION_MESSAGE);
     }
 }
 

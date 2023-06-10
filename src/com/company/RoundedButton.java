@@ -2,6 +2,7 @@ package com.company;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.RoundRectangle2D;
 
 
 public class RoundedButton extends JButton {
@@ -95,5 +96,10 @@ public class RoundedButton extends JButton {
         g2d.drawString(getText(), textX, textY);
 
         g2d.dispose();
+    }
+
+    @Override
+    protected void paintBorder(Graphics g) {
+        // Do nothing to remove the border
     }
 }
