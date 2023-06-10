@@ -330,114 +330,130 @@ public class Player {
         return CanMove;
     }
 
-    //return boolean and add wall if its possible
-    public boolean placeWall(Wall w, Board b) {
-        boolean WallPlace = true;
+    //return boolean and add wall if it is possible
+    public boolean placeWall(Wall wall, Board board) {
+        boolean wallPlaced = true;
 
-        //wall size is more than 2
-        if (Math.sqrt(Math.pow(w.getPt1().getX() - w.getPt2().getX(), 2)
-                + Math.pow(w.getPt1().getY() - w.getPt2().getY(), 2)) != 2) {
-            WallPlace = false;
-        }
-
-        //wall place outside of the board
-        else if (w.getPt1().getX() < 0 || w.getPt2().getX() < 0) {
-            WallPlace = false;
-        } else if (w.getPt1().getY() < 0 || w.getPt2().getY() < 0) {
-            WallPlace = false;
-        } else if (w.getPt1().getX() > 9 || w.getPt2().getX() > 9) {
-            WallPlace = false;
-        } else if (w.getPt1().getY() > 9 || w.getPt2().getY() > 9) {
-            WallPlace = false;
-        }
-
-        //wall is on board's edge
-        else if (w.getPt1().getX() == 0 && w.getPt2().getX() == 0
-                || w.getPt1().getX() == 9 && w.getPt2().getX() == 9
-                || w.getPt1().getY() == 0 && w.getPt2().getY() == 0
-                || w.getPt1().getY() == 9 && w.getPt2().getY() == 9) {
-            WallPlace = false;
-        }
-        //player has no walls left
-        else if (NumWalls == 0)
-            WallPlace = false;
-
-        //new wall crosses another wall
-        for (int i = 0; i < b.getNumWalls(); i++) {
-            if (w.getMidpoint().equals((b.getWall(i).getMidpoint())))
-                WallPlace = false;
-        }
-
-        // check for overlaping walls
-        // (middle of the wall + end of the wall)/2 == (middle of the wall + end of the wall)/2
-        for (int i = 0; i < b.getNumWalls(); i++) {
-            if ((new Point2D.Double((w.getMidpoint().getX() + w.getPt1().getX()) / 2,
-                    (w.getMidpoint().getY() + w.getPt1().getY()) / 2)).equals
-                    (new Point2D.Double((b.getWall(i).getMidpoint().getX() + b.getWall(i).getPt1().getX()) / 2,
-                            (b.getWall(i).getMidpoint().getY() + b.getWall(i).getPt1().getY()) / 2)) ||
-
-                    (new Point2D.Double((w.getMidpoint().getX() + w.getPt1().getX()) / 2,
-                            (w.getMidpoint().getY() + w.getPt1().getY()) / 2)).equals
-                            (new Point2D.Double((b.getWall(i).getMidpoint().getX() + b.getWall(i).getPt2().getX()) / 2,
-                                    (b.getWall(i).getMidpoint().getY() + b.getWall(i).getPt2().getY()) / 2)) ||
-
-                    (new Point2D.Double((w.getMidpoint().getX() + w.getPt2().getX()) / 2,
-                            (w.getMidpoint().getY() + w.getPt2().getY()) / 2)).equals
-                            (new Point2D.Double((b.getWall(i).getMidpoint().getX() + b.getWall(i).getPt1().getX()) / 2,
-                                    (b.getWall(i).getMidpoint().getY() + b.getWall(i).getPt1().getY()) / 2)) ||
-
-                    (new Point2D.Double((w.getMidpoint().getX() + w.getPt2().getX()) / 2,
-                            (w.getMidpoint().getY() + w.getPt2().getY()) / 2)).equals
-                            (new Point2D.Double((b.getWall(i).getMidpoint().getX() + b.getWall(i).getPt2().getX()) / 2,
-                                    (b.getWall(i).getMidpoint().getY() + b.getWall(i).getPt2().getY()) / 2))) {
-                WallPlace = false;
-            }
-        }
-
-        int x1, y1;
-        if (WallPlace) {
-            b.addWall(w);
+        if (!hasRemainingWalls()) {
+            wallPlaced = false;
+        } else if (!isValidWallSize(wall)) {
+            wallPlaced = false;
+        } else if (!isWithinBoardBounds(wall)) {
+            wallPlaced = false;
+        } else if (isOnBoardEdge(wall)) {
+            wallPlaced = false;
+        } else if (crossesExistingWall(wall, board)) {
+            wallPlaced = false;
+        } else {
+            board.addWall(wall);
             NumWalls--;
             CanWin = false;
 
             // check the player can win
-            x1 = b.getPlayer(0).getX();
-            y1 = b.getPlayer(0).getY();
-            canWin(b.getPlayer(0), b);
+            int initialPlayerX = board.getPlayer(0).getX();
+            int initialPlayerY = board.getPlayer(0).getY();
+            canWin(board.getPlayer(0), board);
             CheckCoordinates.clear();
-            b.getPlayer(0).setX(x1);
-            b.getPlayer(0).setY(y1);
+            board.getPlayer(0).setX(initialPlayerX);
+            board.getPlayer(0).setY(initialPlayerY);
 
             if (CanWin) {
                 CanWin = false;
-                x1 = b.getPlayer(1).getX();
-                y1 = b.getPlayer(1).getY();
-                canWin(b.getPlayer(1), b);
+                int secondPlayerX = board.getPlayer(1).getX();
+                int secondPlayerY = board.getPlayer(1).getY();
+                canWin(board.getPlayer(1), board);
                 CheckCoordinates.clear();
-                b.getPlayer(1).setX(x1);
-                b.getPlayer(1).setY(y1);
+                board.getPlayer(1).setX(secondPlayerX);
+                board.getPlayer(1).setY(secondPlayerY);
             }
-            if (b.getNumPlayers() == 4) {
+
+            if (board.getNumPlayers() == 4) {
                 for (int i = 2; i < 4; i++) {
                     if (CanWin) {
                         CanWin = false;
-                        x1 = b.getPlayer(i).getX();
-                        y1 = b.getPlayer(i).getY();
-                        canWin(b.getPlayer(i), b);
+                        int currentPlayerX = board.getPlayer(i).getX();
+                        int currentPlayerY = board.getPlayer(i).getY();
+                        canWin(board.getPlayer(i), board);
                         CheckCoordinates.clear();
-                        b.getPlayer(i).setX(x1);
-                        b.getPlayer(i).setY(y1);
+                        board.getPlayer(i).setX(currentPlayerX);
+                        board.getPlayer(i).setY(currentPlayerY);
                     }
                 }
             }
 
             if (!CanWin) {
-                b.removeWall(w);
+                board.removeWall(wall);
                 NumWalls++;
-                WallPlace = false;
+                wallPlaced = false;
             }
         }
-        return WallPlace;
+
+        return wallPlaced;
+    }
+
+    private boolean isValidWallSize(Wall wall) {
+        double wallLength = Math.sqrt(Math.pow(wall.getPt1().getX() - wall.getPt2().getX(), 2)
+                + Math.pow(wall.getPt1().getY() - wall.getPt2().getY(), 2));
+
+        return wallLength == 2;
+    }
+
+    private boolean isWithinBoardBounds(Wall wall) {
+        double pt1X = wall.getPt1().getX();
+        double pt1Y = wall.getPt1().getY();
+        double pt2X = wall.getPt2().getX();
+        double pt2Y = wall.getPt2().getY();
+
+        return pt1X >= 0 && pt1Y >= 0 && pt2X >= 0 && pt2Y >= 0 &&
+                pt1X <= 9 && pt1Y <= 9 && pt2X <= 9 && pt2Y <= 9;
+    }
+
+    private boolean isOnBoardEdge(Wall wall) {
+        double pt1X = wall.getPt1().getX();
+        double pt1Y = wall.getPt1().getY();
+        double pt2X = wall.getPt2().getX();
+        double pt2Y = wall.getPt2().getY();
+
+        return pt1X == 0 && pt2X == 0 || pt1X == 9 && pt2X == 9 ||
+                pt1Y == 0 && pt2Y == 0 || pt1Y == 9 && pt2Y == 9;
+    }
+
+    private boolean hasRemainingWalls() {
+        return NumWalls > 0;
+    }
+
+    private boolean crossesExistingWall(Wall wall, Board board) {
+        for (int i = 0; i < board.getNumWalls(); i++) {
+            if (wall.getMidpoint().equals(board.getWall(i).getMidpoint())) {
+                return true;
+            }
+        }
+
+        // Check for overlapping walls
+        double wallMidX1 = (wall.getMidpoint().getX() + wall.getPt1().getX()) / 2;
+        double wallMidY1 = (wall.getMidpoint().getY() + wall.getPt1().getY()) / 2;
+        double wallMidX2 = (wall.getMidpoint().getX() + wall.getPt2().getX()) / 2;
+        double wallMidY2 = (wall.getMidpoint().getY() + wall.getPt2().getY()) / 2;
+
+        for (int i = 0; i < board.getNumWalls(); i++) {
+            Wall existingWall = board.getWall(i);
+            double existingMidX1 = (existingWall.getMidpoint().getX() + existingWall.getPt1().getX()) / 2;
+            double existingMidY1 = (existingWall.getMidpoint().getY() + existingWall.getPt1().getY()) / 2;
+            double existingMidX2 = (existingWall.getMidpoint().getX() + existingWall.getPt2().getX()) / 2;
+            double existingMidY2 = (existingWall.getMidpoint().getY() + existingWall.getPt2().getY()) / 2;
+
+            Point2D.Double midpoint1 = new Point2D.Double(existingMidX1, existingMidY1);
+            Point2D.Double midpoint2 = new Point2D.Double(existingMidX2, existingMidY2);
+
+            if (new Point2D.Double(wallMidX1, wallMidY1).equals(midpoint1) ||
+                    new Point2D.Double(wallMidX1, wallMidY1).equals(midpoint2) ||
+                    new Point2D.Double(wallMidX2, wallMidY2).equals(midpoint1) ||
+                    new Point2D.Double(wallMidX2, wallMidY2).equals(midpoint2)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     //this is called when there is a player impeding the current players path
@@ -610,58 +626,53 @@ public class Player {
         y = newY;
     }
 
-    public static void canWin(Player player, Board b) {
+    public static void canWin(Player player, Board board) {
         int bx = player.x, by = player.y;
-        if (player.MoveBead("UP", b)) {
+        if (player.MoveBead("UP", board)) {
             if (!CheckCoordinates.contains(player.x + "" + player.y)) {
                 CheckCoordinates.add(player.x + "" + player.y);
                 if (player.checkWin()) {
                     CanWin = true;
                 }
-                canWin(player, b);
+                canWin(player, board);
             }
         }
         player.x = bx;
         player.y = by;
-        if (player.MoveBead("DOWN", b)) {
+        if (player.MoveBead("DOWN", board)) {
             if (!CheckCoordinates.contains(player.x + "" + player.y)) {
                 CheckCoordinates.add(player.x + "" + player.y);
                 if (player.checkWin()) {
                     CanWin = true;
                 }
-                canWin(player, b);
+                canWin(player, board);
             }
         }
         player.x = bx;
         player.y = by;
-        if (player.MoveBead("RIGHT", b)) {
+        if (player.MoveBead("RIGHT", board)) {
             if (!CheckCoordinates.contains(player.x + "" + player.y)) {
                 CheckCoordinates.add(player.x + "" + player.y);
                 if (player.checkWin()) {
                     CanWin = true;
                 }
-                canWin(player, b);
+                canWin(player, board);
             }
         }
         player.x = bx;
         player.y = by;
-        if (player.MoveBead("LEFT", b)) {
+        if (player.MoveBead("LEFT", board)) {
             if (!CheckCoordinates.contains(player.x + "" + player.y)) {
                 CheckCoordinates.add(player.x + "" + player.y);
                 if (player.checkWin()) {
                     CanWin = true;
                 }
-                canWin(player, b);
+                canWin(player, board);
             }
         }
     }
 
     public boolean checkWin() {
-        boolean Win = false;
-
-        if (this.win_place.ptLineDist(new Point2D.Double(x, y)) == 0)
-            Win = true;
-
-        return Win;
+        return this.win_place.ptLineDist(new Point2D.Double(x, y)) == 0;
     }
 }
