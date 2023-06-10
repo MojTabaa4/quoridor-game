@@ -1,14 +1,20 @@
 package com.company;
 
 /*
-ب is a library for processing JSON data in Java. It allows you to read, write, parse, and query JSON
-search "com.github.cliftonlabs:json-simple:3.1.0" in maven library and download it
+The Clifton Labs' JSON.simple library for Java provides functionality for handling JSON data, including reading,
+ writing, parsing, and querying. To download the library from Maven, follow these steps:
 
-Download JSON.simple library from Maven﻿:
+1. Open your project in IntelliJ IDEA or a similar IDE.
+2. Navigate to the main menu and select "File" and then "Project Structure" (you can use the shortcut Ctrl+Alt+Shift+S).
+3. In the Project Structure dialog, click on "Libraries" on the left-hand side.
+4. Click on the "+" icon to add a new library.
+5. Select "From Maven" from the dropdown menu.
+6. In the search field, enter "com.github.cliftonlabs:json-simple:3.1.0" as the library artifact.
+7. Click on the "Search" button.
+8. Once the library is found, click on the "OK" button to download and add it to your project.
 
-        From the main menu, select File | Project Structure (Ctrl+Alt+Shift+S) and click Libraries.
-        Click Add and select From Maven.
-        In the next dialog, specify the library artifact "com.github.cliftonlabs:json-simple:3.1.0" and click Search.
+By following these steps, you will successfully download the JSON.simple library and be able to
+utilize its features for working with JSON data in your Java project.
 */
 
 import com.github.cliftonlabs.json_simple.JsonArray;
@@ -29,7 +35,6 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class QuoridorMain {
-
     public static Container container;
     public static JFrame gameFrame, startFrame;
 
@@ -109,21 +114,21 @@ public class QuoridorMain {
     }
 
     private static void setupNewGameButton() {
-        JButton newGameButton = createButton("New Game",50, 30);
+        JButton newGameButton = createButton("New Game", 50, 30);
         JPanel newGameButtonPanel = createButtonPanel(newGameButton);
         newGameButton.addActionListener(e -> game());
         container.add(newGameButtonPanel);
     }
 
     private static void setupLoadGameButton() {
-        JButton loadGameButton = createButton("Load Game",40, 30);
+        JButton loadGameButton = createButton("Load Game", 40, 30);
         JPanel loadGameButtonPanel = createButtonPanel(loadGameButton);
         loadGameButton.addActionListener(e -> gameload());
         container.add(loadGameButtonPanel);
     }
 
     private static void setupCupButton() {
-        JButton cupButton = createButton("Cup",40, 30);
+        JButton cupButton = createButton("Cup", 40, 30);
         JPanel cupButtonPanel = createButtonPanel(cupButton);
         cupButton.addActionListener(e -> Cup.CupChamp());
         container.add(cupButtonPanel);
