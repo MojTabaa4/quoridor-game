@@ -1,5 +1,10 @@
 # Quoridor Game
 
+<div style="display: flex;">
+    <img src="images/im1.png" alt="Image 1" style="width: 50%;">
+    <img src="images/im3.png" alt="Image 2" style="width: 50%;">
+</div>
+
 Welcome to the Quoridor Game, a Java implementation of the popular board game Quoridor. The game features a graphical
 user interface (GUI) where players can compete against each other on a virtual game board. The project provides an
 engaging and strategic gaming experience for 2 to 4 players, including cup tournaments with 4 or 8 players.
