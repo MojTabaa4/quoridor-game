@@ -314,7 +314,7 @@ public class Cup {
 
     public static void playGame(ArrayList<Player> players, ArrayList<Player> winners) {
         playFrame = new JFrame();
-        playFrame.setTitle("IT PIONEER");
+        playFrame.setTitle("Quoridor Game");
         playFrame.setSize(1130, 673);
         playFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         playFrame.setResizable(false);

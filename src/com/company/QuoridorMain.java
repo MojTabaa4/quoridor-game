@@ -154,7 +154,7 @@ public class QuoridorMain {
     public static void game() {
         startFrame.setVisible(false);
         gameFrame = new JFrame();
-        gameFrame.setTitle("IT PIONEER");
+        gameFrame.setTitle("Quoridor Game");
         gameFrame.setSize(1130, 673);
         gameFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         gameFrame.setResizable(false);
@@ -351,7 +351,7 @@ public class QuoridorMain {
         if (!checkEmpty) {
             startFrame.setVisible(false);
             gameFrame = new JFrame();
-            gameFrame.setTitle("IT PIONEER");
+            gameFrame.setTitle("Quoridor Game");
             gameFrame.setSize(1130, 673);
             gameFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
             gameFrame.setResizable(false);

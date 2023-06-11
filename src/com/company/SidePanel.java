@@ -295,7 +295,7 @@ public class SidePanel extends JPanel {
         });
 
         //make space between keys
-        blankCenter = new JButton("<O>");
+        blankCenter = new JButton(" ");
         blankCenter.setFocusPainted(false);
         blankCenter.setBorder(null);
         blankCenter.setBackground(players.get(playerTurn - 1).getColor());
@@ -390,23 +390,26 @@ public class SidePanel extends JPanel {
         PlayerInfo.add(wallsLeft);
 
         JPanel labelImage = new JPanel();
-        ImageIcon pic = new ImageIcon("src/com/company/images.png");
-        labelImage.add(new JLabel(pic));
+        ImageIcon pic = new ImageIcon("src/com/company/quoridor.jpg");
+        Image resizedImage = pic.getImage().getScaledInstance(470, 130, Image.SCALE_SMOOTH);
+        ImageIcon resizedIcon = new ImageIcon(resizedImage);
+
+        labelImage.add(new JLabel(resizedIcon));
 
         JPanel labelMove = new JPanel();
         labelMove.setLayout(new GridLayout(3, 1));
         labelMove.add(new JLabel("________________________________", SwingConstants.CENTER));
 
-        JLabel movement = new JLabel("Movement", SwingConstants.CENTER);
+        JLabel movement = new JLabel("Arrow keys", SwingConstants.CENTER);
         movement.setFont(new Font("Arial", Font.BOLD, 25));
         labelMove.add(movement);
-        labelMove.add(new JLabel("Note: Use the buttons below to navigate your pawn", SwingConstants.CENTER));
+        labelMove.add(new JLabel("Please utilize the provided buttons to navigate your pawn.", SwingConstants.CENTER));
 
         JPanel labelInfo = new JPanel();
         labelInfo.setLayout(new GridLayout(3, 1));
         labelInfo.add(new JLabel("________________________________", SwingConstants.CENTER));
 
-        JLabel information = new JLabel("Player Information", SwingConstants.CENTER);
+        JLabel information = new JLabel("Player Information's Turn", SwingConstants.CENTER);
         information.setFont(new Font("Arial", Font.BOLD, 25));
         labelInfo.add(information);
 
