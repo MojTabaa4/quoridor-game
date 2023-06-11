@@ -409,7 +409,7 @@ public class SidePanel extends JPanel {
         labelInfo.setLayout(new GridLayout(3, 1));
         labelInfo.add(new JLabel("________________________________", SwingConstants.CENTER));
 
-        JLabel information = new JLabel("Player Information's Turn", SwingConstants.CENTER);
+        JLabel information = new JLabel("Player Turn's Information", SwingConstants.CENTER);
         information.setFont(new Font("Arial", Font.BOLD, 25));
         labelInfo.add(information);
 
