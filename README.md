@@ -85,8 +85,7 @@ The Quoridor Game implementation offers several notable features:
   their opponents.
 - JSON Data Persistence: Game progress can be saved and loaded using the JSON format, allowing players to continue from
   where they left off.
-- Multiplayer Support: The game supports 2 to 4 players, allowing you to compete against your friends or challenge AI
-  opponents.
+- Multiplayer Support: The game supports 2 to 4 players, allowing you to compete against your friends.
 
 ## Game Modes
 
