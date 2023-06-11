@@ -1,6 +1,6 @@
 # Quoridor Game
 ![Quoridor Image1](images/im1.png)
-![Quoridor Image3](images/im2.png)
+![Quoridor Image2](images/im2.png)
 
 Welcome to the Quoridor Game, a Java implementation of the popular board game Quoridor. The game features a graphical
 user interface (GUI) where players can compete against each other on a virtual game board. The project provides an
@@ -88,6 +88,8 @@ The Quoridor Game implementation offers several notable features:
 - JSON Data Persistence: Game progress can be saved and loaded using the JSON format, allowing players to continue from
   where they left off.
 - Multiplayer Support: The game supports 2 to 4 players, allowing you to compete against your friends.
+
+![Quoridor Image3](images/im3.png)
 
 ## Game Modes
 
