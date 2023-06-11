@@ -266,8 +266,8 @@ public class QuoridorMain {
             while (!isValidName) {
                 String playerName = getPlayerName(i + 1);
 
-                if (playerName.matches(".*\\d.*")) {
-                    showErrorDialog("The player's name must not contain just numbers", "Error");
+                if (playerName.matches("^\\d.*")) {
+                    showErrorDialog("The player's name must not contain just numbers or start with a number", "Error");
                 } else if (playerNames.contains(playerName)) {
                     showErrorDialog("Each player should have a different name", "Error");
                 } else if (playerName.trim().isEmpty()) {
